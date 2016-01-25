@@ -5,7 +5,7 @@
 2. clone this project and follow "How To" instructions in readme:
 https://github.com/jaroslavas/Gstreamer-Android-example
 
-..* If you don't know your sdk path, you can find it in:
+* If you don't know your sdk path, you can find it in:
     AndroidStudio Preferences--> Appearance and Behavior-->System Settings-->SDK
 
 3. Install any dependencies or missing things Android Studio asks you to
