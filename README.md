@@ -17,7 +17,9 @@ https://github.com/jaroslavas/Gstreamer-Android-example
  
 **1.** 
 ```
-Error:(19, 0) Error: NDK integration is deprecated in the current plugin.  Consider trying the new experimental plugin.  For details, see http://tools.android.com/tech-docs/new-build-system/gradle-experimental.
+Error:(19, 0) Error: NDK integration is deprecated in the current plugin.  
+Consider trying the new experimental plugin.  
+For details, see http://tools.android.com/tech-docs/new-build-system/gradle-experimental.
 ```
 + Open gradle.properties or create one if necessary
 + inside gradle.properties set `android.useDeprecatedNdk=true` to continue using the current NDK integration
@@ -25,22 +27,21 @@ Error:(19, 0) Error: NDK integration is deprecated in the current plugin.  Consi
 
 **2.** 
 ```
-Error:(58, 0) No signature of method: com.android.build.gradle.AppPlugin.getNdkFolder() is applicable for argument types: () values: []
-        open file. (or open build.grade (Module: app)
+Error:(58, 0) No signature of method: 
+com.android.build.gradle.AppPlugin.getNdkFolder() is applicable 
+for argument types: () values: []
 ```
 
 This is happening because the version of gradle from the original tutorial is old. We need to update some simple syntax used to fetch plugins.
 To fix:
 
-+ in Build.gradle (Module:app), the ndkBuild task should look like this:
++ in Build.gradle (Module:app), modify the ndkBuild task to look like this:
 
-```
+```java
 task ndkBuild(type: Exec, description: 'Compile JNI source via NDK') {
     def ndkDir = plugins.getPlugin('com.android.application').sdkHandler.getNdkFolder()
     println(project.plugins.getPlugin('com.android.application').sdkHandler.getNdkFolder())
 ```
-
-+ gradle sync. This error should have disappeared.
 
 
 Currently this is a clone of https://github.com/jaroslavas/Gstreamer-Android-example. We are working on getting it up and running and modifying the functionality.
