@@ -5,3 +5,4 @@ app/build
 app/gst-build-armeabi
 build
 local.properties
+app/gst-build-x86

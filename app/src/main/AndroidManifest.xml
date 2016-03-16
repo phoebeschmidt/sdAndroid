@@ -85,10 +85,6 @@
                 <data android:pathPattern=".*\\.MOV" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.lamerman.FileDialog"
-            android:label="@string/filechooser_name" >
-        </activity>
     </application>
 
 </manifest>
