@@ -1,7 +1,7 @@
 LOCAL_PATH := $(call my-dir)
 
 # Edit this line
-GSTREAMER_ROOT_ANDROID := /Users/oberkowitz/Downloads/gstreamer-1.0-android-x86-1.7.1
+GSTREAMER_ROOT_ANDROID := /Users/oberkowitz/Downloads/gstreamer-1.0-android-arm-1.7.1
 
 
 SHELL := PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin /bin/bash

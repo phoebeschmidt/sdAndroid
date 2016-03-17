@@ -146,7 +146,7 @@ static void *app_function (void *userdata) {
   g_main_context_push_thread_default(data->context);
   
   /* Build pipeline */
-  data->pipeline = gst_parse_launch("audiotestsrc ! audioconvert ! audioresample ! autoaudiosink", &error);
+  data->pipeline = gst_parse_launch("udpsrc multicast-group=224.0.0.1 auto-multicast=true port=3000 caps=\"application/x-rtp, media=(string)audio, clock-rate=(int)8000, encoding-name=(string)PCMU, payload=(int)0, ssrc=(guint)1350777638, clock-base=(guint)2942119800, seqnum-base=(guint)47141\" ! rtppcmudepay ! mulawdec ! autoaudiosink", &error);
   if (error) {
     gchar *message = g_strdup_printf("Unable to build pipeline: %s", error->message);
     g_clear_error (&error);
