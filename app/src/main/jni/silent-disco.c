@@ -131,6 +131,15 @@ static void check_initialization_complete (CustomData *data) {
     }
 }
 
+static void source_setup (GstElement *pipeline, GstElement *source, CustomData *data) {
+  gboolean drop_on_latency = 0;
+  guint latency = 50;
+  g_print ("Source has been created. Configuring.\n");
+  g_object_set (source, "latency", latency, NULL);
+  g_object_set (source, "drop-on-latency", drop_on_latency, NULL);
+}
+
+
 /* Main method for the native code. This is executed on its own thread. */
 static void *app_function (void *userdata) {
   JavaVMAttachArgs args;
@@ -146,7 +155,10 @@ static void *app_function (void *userdata) {
   g_main_context_push_thread_default(data->context);
   
   /* Build pipeline */
-  data->pipeline = gst_parse_launch("udpsrc multicast-group=224.0.0.1 auto-multicast=true port=3000 caps=\"application/x-rtp, media=(string)audio, clock-rate=(int)8000, encoding-name=(string)PCMU, payload=(int)0, ssrc=(guint)1350777638, clock-base=(guint)2942119800, seqnum-base=(guint)47141\" ! rtppcmudepay ! mulawdec ! autoaudiosink", &error);
+  data->pipeline = gst_parse_launch("playbin uri=rtsp://10.0.0.14:8554/test uridecodebin0::source::latency=150", &error);
+  g_signal_connect (data->pipeline, "source-setup", G_CALLBACK (source_setup), NULL);
+
+
   if (error) {
     gchar *message = g_strdup_printf("Unable to build pipeline: %s", error->message);
     g_clear_error (&error);
@@ -228,7 +240,7 @@ static void gst_native_pause (JNIEnv* env, jobject thiz) {
   CustomData *data = GET_CUSTOM_DATA (env, thiz, custom_data_field_id);
   if (!data) return;
   GST_DEBUG ("Setting state to PAUSED");
-  gst_element_set_state (data->pipeline, GST_STATE_PAUSED);
+  gst_element_set_state (data->pipeline, GST_STATE_READY);
 }
 
 /* Static class initializer: retrieve method and field IDs */
@@ -263,10 +275,10 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved) {
   java_vm = vm;
   
   if ((*vm)->GetEnv(vm, (void**) &env, JNI_VERSION_1_4) != JNI_OK) {
-    __android_log_print (ANDROID_LOG_ERROR, "tutorial-5", "Could not retrieve JNIEnv");
+    __android_log_print (ANDROID_LOG_ERROR, "silent-disco", "Could not retrieve JNIEnv");
     return 0;
     }
-  jclass klass = (*env)->FindClass (env, "com/gst_sdk_tutorials/tutorial_5/Tutorial5");
+  jclass klass = (*env)->FindClass (env, "com/silent_disco/SilentDisco");
   (*env)->RegisterNatives (env, klass, native_methods, G_N_ELEMENTS(native_methods));
   
   pthread_key_create (&current_jni_env, detach_current_thread);

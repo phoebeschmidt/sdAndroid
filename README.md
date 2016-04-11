@@ -52,4 +52,4 @@ Server
 
 
 Client
-`gst-launch-1.0 udpsrc multicast-group=224.0.0.1 auto-multicast=true port=3000 caps=\"application/x-rtp, media=(string)audio, clock-rate=(int)8000, encoding-name=(string)PCMU, payload=(int)0, ssrc=(guint)1350777638, clock-base=(guint)2942119800, seqnum-base=(guint)47141\" ! rtppcmudepay ! mulawdec ! autoaudiosink`
+`gst-launch-1.0 udpsrc address=224.0.0.1 auto-multicast=true port=3000 caps=\"application/x-rtp, media=(string)audio, clock-rate=(int)8000, encoding-name=(string)PCMU, payload=(int)0, ssrc=(guint)1350777638, clock-base=(guint)2942119800, seqnum-base=(guint)47141\" ! rtppcmudepay ! mulawdec ! autoaudiosink`

@@ -1,4 +1,4 @@
-package com.gst_sdk_tutorials.tutorial_5;
+package com.silent_disco;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import org.freedesktop.gstreamer.GStreamer;
 
-public class Tutorial5 extends Activity {
+public class SilentDisco extends Activity {
     private native void nativeInit(); // Initialize native code, build pipeline, etc
     private native void nativeFinalize(); // Destroy pipeline and shutdown native code
     private native void nativePlay(); // Set pipeline to PLAYING
@@ -36,9 +36,9 @@ public class Tutorial5 extends Activity {
             return;
         }
 
-        setContentView(R.layout.main);
+        setContentView(com.silent_disco.R.layout.main);
 
-        ImageButton play = (ImageButton) this.findViewById(R.id.button_play);
+        ImageButton play = (ImageButton) this.findViewById(com.silent_disco.R.id.button_play);
         play.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 is_playing_desired = true;
@@ -46,7 +46,7 @@ public class Tutorial5 extends Activity {
             }
         });
 
-        ImageButton pause = (ImageButton) this.findViewById(R.id.button_stop);
+        ImageButton pause = (ImageButton) this.findViewById(com.silent_disco.R.id.button_stop);
         pause.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 is_playing_desired = false;
@@ -63,8 +63,8 @@ public class Tutorial5 extends Activity {
         }
 
         // Start with disabled buttons, until native code is initialized
-        this.findViewById(R.id.button_play).setEnabled(false);
-        this.findViewById(R.id.button_stop).setEnabled(false);
+        this.findViewById(com.silent_disco.R.id.button_play).setEnabled(false);
+        this.findViewById(com.silent_disco.R.id.button_stop).setEnabled(false);
 
         nativeInit();
     }
@@ -81,7 +81,7 @@ public class Tutorial5 extends Activity {
 
     // Called from native code. This sets the content of the TextView from the UI thread.
     private void setMessage(final String message) {
-        final TextView tv = (TextView) this.findViewById(R.id.textview_message);
+        final TextView tv = (TextView) this.findViewById(com.silent_disco.R.id.textview_message);
         runOnUiThread (new Runnable() {
             public void run() {
                 tv.setText(message);
@@ -104,15 +104,15 @@ public class Tutorial5 extends Activity {
         final Activity activity = this;
         runOnUiThread(new Runnable() {
             public void run() {
-                activity.findViewById(R.id.button_play).setEnabled(true);
-                activity.findViewById(R.id.button_stop).setEnabled(true);
+                activity.findViewById(com.silent_disco.R.id.button_play).setEnabled(true);
+                activity.findViewById(com.silent_disco.R.id.button_stop).setEnabled(true);
             }
         });
     }
 
     static {
         System.loadLibrary("gstreamer_android");
-        System.loadLibrary("tutorial-5");
+        System.loadLibrary("silent-disco");
         nativeClassInit();
     }
 
