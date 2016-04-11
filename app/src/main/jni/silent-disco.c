@@ -243,6 +243,20 @@ static void gst_native_pause (JNIEnv* env, jobject thiz) {
   gst_element_set_state (data->pipeline, GST_STATE_READY);
 }
 
+void gst_native_set_uri (JNIEnv* env, jobject thiz, jstring uri) {
+  CustomData *data = GET_CUSTOM_DATA (env, thiz, custom_data_field_id);
+  if (!data || !data->pipeline) return;
+  const jbyte *char_uri = (*env)->GetStringUTFChars (env, uri, NULL);
+  GST_DEBUG ("Setting URI to %s", char_uri);
+//  if (data->target_state >= GST_STATE_READY)
+//  gst_element_set_state (data->pipeline, GST_STATE_READY);
+  g_object_set(data->pipeline, "uri", char_uri, NULL);
+  (*env)->ReleaseStringUTFChars (env, uri, char_uri);
+//  data->duration = GST_CLOCK_TIME_NONE;
+//  data->is_live = (gst_element_set_state (data->pipeline, data->target_state) == GST_STATE_CHANGE_NO_PREROLL);
+}
+
+
 /* Static class initializer: retrieve method and field IDs */
 static jboolean gst_native_class_init (JNIEnv* env, jclass klass) {
   custom_data_field_id = (*env)->GetFieldID (env, klass, "native_custom_data", "J");
@@ -265,6 +279,7 @@ static JNINativeMethod native_methods[] = {
         { "nativeFinalize", "()V", (void *) gst_native_finalize},
         { "nativePlay", "()V", (void *) gst_native_play},
         { "nativePause", "()V", (void *) gst_native_pause},
+        { "nativeSetUri", "(Ljava/lang/String;)V", (void *) gst_native_set_uri},
         { "nativeClassInit", "()Z", (void *) gst_native_class_init}
 };
 

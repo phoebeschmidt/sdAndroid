@@ -1,6 +1,8 @@
 package com.silent_disco;
 
 import android.app.Activity;
+import android.net.nsd.NsdManager;
+import android.net.nsd.NsdServiceInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,11 +13,15 @@ import android.widget.Toast;
 
 import org.freedesktop.gstreamer.GStreamer;
 
-public class SilentDisco extends Activity {
+public class SilentDisco extends Activity implements NsdHelper.HelperListener {
+    private static final String TAG = "SilentDisco";
+    private NsdHelper mNsdHelper;
+
     private native void nativeInit(); // Initialize native code, build pipeline, etc
     private native void nativeFinalize(); // Destroy pipeline and shutdown native code
     private native void nativePlay(); // Set pipeline to PLAYING
     private native void nativePause(); // Set pipeline to PAUSED
+    private native void nativeSetUri(String mediaUri); // Set the URI for playbin
     private static native boolean nativeClassInit(); // Initialize native class: cache Method IDs for callbacks
     private long native_custom_data; // Native code will use this to keep private data
 
@@ -67,32 +73,35 @@ public class SilentDisco extends Activity {
         this.findViewById(com.silent_disco.R.id.button_stop).setEnabled(false);
 
         nativeInit();
+
+        mNsdHelper = new NsdHelper(this);
+        mNsdHelper.initializeNsd();
+        mNsdHelper.registerListener(this);
     }
 
-    protected void onSaveInstanceState (Bundle outState) {
+    protected void onSaveInstanceState(Bundle outState) {
         Log.d ("GStreamer", "Saving state, playing:" + is_playing_desired);
         outState.putBoolean("playing", is_playing_desired);
-    }
-
-    protected void onDestroy() {
-        nativeFinalize();
-        super.onDestroy();
     }
 
     // Called from native code. This sets the content of the TextView from the UI thread.
     private void setMessage(final String message) {
         final TextView tv = (TextView) this.findViewById(com.silent_disco.R.id.textview_message);
-        runOnUiThread (new Runnable() {
+        runOnUiThread(new Runnable() {
             public void run() {
                 tv.setText(message);
             }
         });
     }
 
+    private void setMediaUri(String mediaUri) {
+        nativeSetUri (mediaUri);
+    }
+
     // Called from native code. Native code calls this once it has created its pipeline and
     // the main loop is running, so it is ready to accept commands.
     private void onGStreamerInitialized () {
-        Log.i ("GStreamer", "Gst initialized. Restoring state, playing:" + is_playing_desired);
+        Log.i("GStreamer", "Gst initialized. Restoring state, playing:" + is_playing_desired);
         // Restore previous playing state
         if (is_playing_desired) {
             nativePlay();
@@ -116,4 +125,41 @@ public class SilentDisco extends Activity {
         nativeClassInit();
     }
 
+    @Override
+    protected void onPause() {
+        if (mNsdHelper != null) {
+            mNsdHelper.stopDiscovery();
+        }
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mNsdHelper != null) {
+            mNsdHelper.discoverServices();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        nativeFinalize();
+        mNsdHelper.tearDown();
+        super.onDestroy();
+    }
+
+
+    /**
+     * HelperListener methods so that we can receive messages from the NsdHelper and tell Gstreamer
+     * the uri of the service
+     */
+
+    /**
+     *
+     * @param uri
+     */
+    @Override
+    public void notifyOnResolved(String uri) {
+        setMediaUri(uri);
+    }
 }

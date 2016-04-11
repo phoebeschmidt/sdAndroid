@@ -12,12 +12,12 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.gst_sdk_tutorials.tutorial_5"
+        applicationId "com.silent_disco"
         minSdkVersion 9
         targetSdkVersion 14
 
         ndk {
-            moduleName "tutorial-5"
+            moduleName "silent-disco"
         }
     }
 
