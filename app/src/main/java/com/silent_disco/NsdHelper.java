@@ -21,6 +21,8 @@ import android.net.nsd.NsdServiceInfo;
 import android.net.nsd.NsdManager;
 import android.util.Log;
 
+import java.net.InetAddress;
+
 public class NsdHelper {
 
     Context mContext;
@@ -115,7 +117,7 @@ public class NsdHelper {
                     return;
                 }
 
-                helperListener.notifyOnResolved("rtsp:/" + serviceInfo.getHost() + ":" + String.valueOf(serviceInfo.getPort()));
+                helperListener.notifyOnResolved(serviceInfo.getHost(), serviceInfo.getPort());
                 mService = serviceInfo;
             }
         };
@@ -178,7 +180,7 @@ public class NsdHelper {
 
     protected interface HelperListener {
 
-        public void notifyOnResolved(String uri);
+        public void notifyOnResolved(InetAddress inetAddress, int port);
 
     }
 }

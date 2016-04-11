@@ -13,6 +13,9 @@ import android.widget.Toast;
 
 import org.freedesktop.gstreamer.GStreamer;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+
 public class SilentDisco extends Activity implements NsdHelper.HelperListener {
     private static final String TAG = "SilentDisco";
     private NsdHelper mNsdHelper;
@@ -154,12 +157,9 @@ public class SilentDisco extends Activity implements NsdHelper.HelperListener {
      * the uri of the service
      */
 
-    /**
-     *
-     * @param uri
-     */
     @Override
-    public void notifyOnResolved(String uri) {
+    public void notifyOnResolved(InetAddress inetAddress, int port) {
+        String uri = "rtsp://" + inetAddress.getHostName() + ":" + String.valueOf(port) + "/disco";
         setMediaUri(uri);
     }
 }
